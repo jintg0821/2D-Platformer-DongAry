@@ -51,7 +51,7 @@ public class Player : MonoBehaviour
                 if (rb.velocity.x < 0)
                 {
                     plrHead = -1;
-                    anim.SetBool("Run", true);
+                    anim.SetBool("Run",false);
                     sr.flipX = true;
                 }
             }
@@ -62,12 +62,13 @@ public class Player : MonoBehaviour
             }
             if (Input.GetButtonUp("Horizontal"))
             {
-                anim.SetBool("Sliding", true);
+                anim.SetBool("Jump", true);
+
             }
             if (rb.velocity.x == 0)
             {
                 anim.SetBool("Run", false);
-                anim.SetBool("Sliding", false);
+                anim.SetBool("Jump", false);
             }
         }
     }
