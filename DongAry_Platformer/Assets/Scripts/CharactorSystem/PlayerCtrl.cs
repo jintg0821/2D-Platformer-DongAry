@@ -8,13 +8,13 @@ public class PlayerCtrl : GeneralAnimation
     Rigidbody2D rb;
     private SpriteRenderer sr;
     private Animator anim;
-    public bool attackAble = true;
+    Vector2 velocity;
+
     public float MoveSpeed;
-    public short plrHead = 1;
     public float jumpForce;
 
 
-   
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -30,65 +30,37 @@ public class PlayerCtrl : GeneralAnimation
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C) && attackAble)
+        rb.velocity = new Vector2(Input.GetAxis("Horizontal") * MoveSpeed, rb.velocity.y);
+        if (rb.velocity.x != 0)
         {
-            attackAble = false;
-            rb.velocity = Vector3.zero;
-            StartCoroutine(AtackTimer());
+            if (rb.velocity.x > 0)
+            {
+                
+                anim.SetBool("Run", true);
+                sr.flipX = false;
+            }
+            if (rb.velocity.x < 0)
+            {
+
+                anim.SetBool("Run", true);
+                sr.flipX = true;
+            }
         }
-        if (!attackAble)
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rb.velocity += Vector2.up * jumpForce;
+            anim.SetBool("Jump", true);
+        }
+
+
+        if (rb.velocity.x == 0)
         {
             anim.SetBool("Run", false);
             anim.SetBool("Jump", false);
         }
-        if (attackAble)
-        {
-            rb.velocity = new Vector2(Input.GetAxis("Horizontal") * MoveSpeed, rb.velocity.y);
-            if (rb.velocity.x != 0)
-            {
-                if (rb.velocity.x > 0)
-                {
-                    plrHead = 1;
-                    anim.SetBool("Run", true);
-                    sr.flipX = false;
-                }
-                if (rb.velocity.x < 0)
-                {
-                    plrHead = -1;
-                    anim.SetBool("Run", true);
-                    sr.flipX = true;
-                }
-            }
-            if (Physics2D.Raycast(transform.position, Vector2.down, 1.7f) && Input.GetKeyDown(KeyCode.Space))
-            {
-                rb.velocity += Vector2.up * jumpForce;
-
-            }
-            if (Input.GetButtonUp("Horizontal"))
-            {
-                anim.SetBool("Jump", true);
-
-            }
-            if (rb.velocity.x == 0)
-            {
-                anim.SetBool("Run", false);
-                anim.SetBool("Jump", false);
-            }
-        }
     }
 
-    IEnumerator AtackTimer()
-    {
-        anim.SetBool("Attack", true);
-        yield return new WaitForSeconds(0.1f);
-        float AtkSpeed = anim.GetCurrentAnimatorStateInfo(0).length;
-        yield return new WaitForSeconds(AtkSpeed / 2);
-        RaycastHit2D rayHitOBJ = Physics2D.Raycast(transform.position, Vector2.right * plrHead, 2);
-        
-        yield return new WaitForSeconds((AtkSpeed / 2) - 0.2f);
-        
-        yield return new WaitForSeconds(0.2f);
-        anim.SetBool("Attack", false);
-        attackAble = true;
-    }
 }
+
+    
