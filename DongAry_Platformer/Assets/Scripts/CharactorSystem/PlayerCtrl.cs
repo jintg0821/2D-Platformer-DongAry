@@ -45,20 +45,25 @@ public class PlayerCtrl : GeneralAnimation
                 anim.SetBool("Run", true);
                 sr.flipX = true;
             }
+            else
+            {
+                anim.SetBool("Run", false);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.velocity += Vector2.up * jumpForce;
             anim.SetBool("Jump", true);
+            anim.SetBool("Run", false); // Jump 상태로 전환할 때 Run 애니메이션을 비활성화
         }
 
-
-        if (rb.velocity.x == 0)
+        if (rb.velocity.y == 0 && !Input.GetKeyDown(KeyCode.Space))
         {
-            anim.SetBool("Run", false);
             anim.SetBool("Jump", false);
         }
+
+
     }
 
 }
